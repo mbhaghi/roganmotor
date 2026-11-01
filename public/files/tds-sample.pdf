@@ -1,0 +1,61 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 830 >>
+stream
+BT
+/F1 14 Tf
+72 760 Td
+(Technical Data Sheet (SAMPLE)) Tj
+/F1 10 Tf
+1 0 0 1 72 735 Tm
+(This is a placeholder TDS file for the prototype.) Tj
+1 0 0 1 72 719 Tm
+() Tj
+1 0 0 1 72 703 Tm
+(In production, replace this with the official Technical Data Sheet) Tj
+1 0 0 1 72 687 Tm
+(provided by the brand for each product and batch.) Tj
+1 0 0 1 72 671 Tm
+() Tj
+1 0 0 1 72 655 Tm
+(Required fields per docs/02 section 2.7:) Tj
+1 0 0 1 72 639 Tm
+(  - SAE viscosity grade, API / ILSAC / ACEA / JASO classes) Tj
+1 0 0 1 72 623 Tm
+(  - OEM approvals with level (approved / meets)) Tj
+1 0 0 1 72 607 Tm
+(  - Kinematic viscosity at 40C and 100C) Tj
+1 0 0 1 72 591 Tm
+(  - Viscosity index, HTHS, pour point, flash point) Tj
+1 0 0 1 72 575 Tm
+(  - Noack volatility, TBN, density at 15C) Tj
+1 0 0 1 72 559 Tm
+(  - SAPS level and base oil group) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000001122 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1192
+%%EOF

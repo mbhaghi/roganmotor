@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-slate-50 text-ink antialiased;
+    font-feature-settings: 'ss01';
+  }
+
+  /* اعداد لاتین در متن‌های فنی خواناترند؛ در بخش‌های فارسی تبدیل می‌شوند */
+  .num {
+    direction: ltr;
+    unicode-bidi: isolate;
+    display: inline-block;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-bold leading-snug;
+  }
+
+  ::selection {
+    @apply bg-brand-200 text-brand-900;
+  }
+}
+
+@layer components {
+  .container-site {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .card {
+    @apply rounded-xl border border-slate-200 bg-white shadow-card;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold
+           transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500
+           focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand-700 text-white hover:bg-brand-800;
+  }
+
+  .btn-gold {
+    @apply btn bg-gold-500 text-white hover:bg-gold-600;
+  }
+
+  .btn-outline {
+    @apply btn border border-slate-300 bg-white text-ink hover:border-brand-400 hover:text-brand-700;
+  }
+
+  .btn-ghost {
+    @apply btn text-ink-soft hover:bg-slate-100 hover:text-brand-700;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium;
+  }
+
+  .badge-spec {
+    @apply badge border border-brand-200 bg-brand-50 text-brand-800;
+  }
+
+  .badge-ok {
+    @apply badge border border-emerald-200 bg-emerald-50 text-emerald-800;
+  }
+
+  .badge-warn {
+    @apply badge border border-amber-300 bg-amber-50 text-amber-900;
+  }
+
+  .badge-bad {
+    @apply badge border border-rose-200 bg-rose-50 text-rose-800;
+  }
+
+  .badge-gold {
+    @apply badge border border-gold-300 bg-gold-50 text-gold-800;
+  }
+
+  .input {
+    @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-ink
+           placeholder:text-ink-mute focus:border-brand-500 focus:outline-none focus:ring-1
+           focus:ring-brand-500;
+  }
+
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-ink-soft;
+  }
+
+  .section-title {
+    @apply text-2xl font-extrabold text-ink sm:text-3xl;
+  }
+
+  .section-sub {
+    @apply mt-2 max-w-3xl text-sm leading-7 text-ink-soft sm:text-base;
+  }
+
+  .prose-fa {
+    @apply text-[15px] leading-8 text-ink-soft;
+  }
+
+  .prose-fa p {
+    @apply mb-5;
+  }
+
+  .prose-fa strong {
+    @apply font-bold text-ink;
+  }
+
+  .table-clean {
+    @apply w-full border-collapse text-sm;
+  }
+
+  .table-clean th {
+    @apply border-b-2 border-brand-200 bg-brand-50 px-3 py-2.5 text-right font-bold text-brand-900;
+  }
+
+  .table-clean td {
+    @apply border-b border-slate-200 px-3 py-2.5 text-ink-soft;
+  }
+
+  .table-clean tr:hover td {
+    @apply bg-slate-50;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* نوار طلایی نازک برای بخش‌های ویژه */
+  .rule-gold {
+    @apply border-t-2 border-gold-400/60;
+  }
+}

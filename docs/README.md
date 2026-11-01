@@ -17,6 +17,34 @@
 
 ---
 
+## پیاده‌سازی: پروتوتایپ اجرایی
+
+بخش دوم این مخزن، یک پروتوتایپ کامل از همین استراتژی است — نه یک mockup، بلکه یک
+فروشگاه Next.js (App Router) با **۷۷ صفحهٔ استاتیک/SSG**، دادهٔ ساخت‌یافتهٔ Schema.org
+و `sitemap.xml` خودکار.
+
+هر سند مطالعاتی مستقیماً به کد نگاشت شده است:
+
+| سند | پیاده‌سازی |
+| --- | --- |
+| `01` — الگوریتم هفت‌گامی انتخاب روغن (§۱٫۸) | `src/lib/matching.ts` → تابع `findOil` |
+| `01` — سبد کامل روانکار (§۱٫۴) | `src/lib/products.ts` → ۱۶ SKU در ۶ دسته |
+| `02` — مدل دادهٔ محصول (§۲٫۷) | `src/lib/types.ts` |
+| `02` — تفکیک approved / meets | `src/components/SpecBadges.tsx` → `ApprovalList` |
+| `03` — سه سناریوی تک‌برندی (§۳٫۱) | `src/lib/config.ts` → `ROLE_PROFILES` + صفحهٔ `/senario-ha` |
+| `03` — ابزار روغن‌یاب سه‌مسیره (§۳٫۶) | `src/components/OilFinder.tsx` |
+| `03` — دروازهٔ ایمنی دادهٔ تأییدنشده | `src/lib/vehicles.ts` → `canRecommend` |
+| `03` — چک‌لیست صفحهٔ محصول (§۳٫۷) | `src/app/mahsolat/[slug]/page.tsx` |
+| `03` — بخش B2B و سه پلهٔ قیمتی (§۳٫۸) | `src/app/omde/page.tsx` |
+| `03` — یادآور تعویض و LTV (§۳٫۲) | `src/components/ReminderWidget.tsx` |
+| `04` — قالب صفحات برنامه‌ای خودرو (§۴٫۲) | `src/app/khodroha/[slug]/page.tsx` |
+| `04` — خوشه‌های محتوایی (§۴٫۳) | `src/lib/articles.ts` + `src/lib/specs.ts` |
+| `04` — چک‌لیست سئوی فنی (§۴٫۵) | `src/app/sitemap.ts`، `robots.ts`، `JsonLd.tsx` |
+
+اجرا: `npm install && npm run dev`
+
+---
+
 ## اگر فقط ۱۰ دقیقه وقت دارید، این پنج جمله را بخوانید
 
 1. **روغن موتور یک کالای اشتراکی است، نه یک کالا.** هر خودرو ۱ تا ۳ بار در سال، برای همیشه، به آن نیاز دارد. سایت باید برای «خرید دوم» طراحی شود نه «خرید اول».
