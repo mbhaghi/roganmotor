@@ -480,8 +480,28 @@ export function findOil(input: MatchInput): MatchResult {
   const suggestedBottles = primary ? planBottles(primary, capacityWithFilterL) : [];
 
   const warnings: string[] = [];
-  if (v.aspiration === 'turbo' && primary && !primary.api.includes('SP')) {
-    warnings.push('موتور توربو است؛ ترجیحاً از روغن با API SP استفاده کنید.');
+  /**
+   * هشدار توربو باید سوخت‌آگاه باشد.
+   *
+   * نسخهٔ قبلی فقط `!primary.api.includes('SP')` را می‌دید. API SP یک مشخصهٔ
+   * *بنزینی* است، پس برای هر کامیون توربودیزل شلیک می‌شد — روغن پیشنهادی درست
+   * بود (hdeo-15w40-ck4 با CK-4) ولی کنارش نوشته می‌شد «ترجیحاً از روغن با
+   * API SP استفاده کنید». این هم گمراه‌کننده بود و هم اعتماد را به همان
+   * پیشنهادِ درست خدشه‌دار می‌کرد.
+   *
+   * این هشدار در صفحهٔ خودرو رندر نمی‌شود، فقط در OilFinder — برای همین با
+   * curl روی /khodroha/* دیده نمی‌شد و نهفته ماند.
+   */
+  if (v.aspiration === 'turbo' && primary) {
+    if (v.fuel === 'diesel') {
+      const floorRank = API_DIESEL_LADDER.indexOf('CJ-4');
+      const bestRank = Math.max(-1, ...primary.api.map((a) => API_DIESEL_LADDER.indexOf(a)));
+      if (bestRank < floorRank) {
+        warnings.push('موتور دیزل توربو است؛ ترجیحاً از روغن با API CJ-4 یا CK-4 استفاده کنید.');
+      }
+    } else if (!primary.api.includes('SP')) {
+      warnings.push('موتور توربو است؛ ترجیحاً از روغن با API SP استفاده کنید.');
+    }
   }
   if (v.hasDpf && primary && primary.sapsLevel === 'full') {
     warnings.push('هشدار: خودروی DPF‌دار نباید روغن Full-SAPS دریافت کند.');

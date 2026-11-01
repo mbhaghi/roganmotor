@@ -142,6 +142,34 @@ for (const v of VEHICLES.filter((x) => x.apiRequired.includes('CK-4'))) {
   check(!r.primary.api.includes('FA-4') || r.primary.api.includes('CK-4'), `${v.slug} → ${r.primary.slug}`, 'FA-4 به‌تنهایی جای CK-4 را نمی‌گیرد');
 }
 
+/**
+ * آلودگیِ سوختِ متقاطع در هشدارها.
+ *
+ * API SP/SN/SL مشخصهٔ بنزینی و CK-4/CJ-4/FA-4 مشخصهٔ دیزل است. هشدارِ یک
+ * خودروی دیزلی نباید کد بنزینی نام ببرد و برعکس — چنین هشداری حتی وقتی
+ * خودِ پیشنهاد درست است، کاربر را گمراه و بی‌اعتماد می‌کند.
+ *
+ * این سنجه لازم بود چون هشدارها فقط در OilFinder رندر می‌شوند، نه در صفحهٔ
+ * خودرو؛ پس بررسی صفحه‌ها با curl این دسته را هرگز نمی‌دید.
+ */
+const PETROL_CODES = /\bAPI SP\b|\bSP\b/;
+const DIESEL_CODES = /\bCK-4\b|\bCJ-4\b|\bCI-4\b|\bFA-4\b|\bCH-4\b/;
+for (const v of VEHICLES) {
+  const r = findOil({ vehicle: v, climate: 'moderate', duty: 'normal' });
+  for (const w of r.warnings ?? []) {
+    if (v.fuel === 'diesel') {
+      check(!/API SP/.test(w), `${v.slug} هشدار دیزلی کد بنزینی دارد`, w);
+    } else {
+      check(!DIESEL_CODES.test(w), `${v.slug} هشدار بنزینی کد دیزلی دارد`, w);
+    }
+  }
+  // هشدار توربو باید برای دیزل از نردبان دیزلی حرف بزند
+  if (v.aspiration === 'turbo' && r.primary && v.fuel === 'diesel') {
+    const turboWarn = (r.warnings ?? []).filter((w) => w.includes('توربو'));
+    check(turboWarn.every((w) => !PETROL_CODES.test(w)), `${v.slug} هشدار توربوی دیزل`, turboWarn.join(' | '));
+  }
+}
+
 // ─────────────────────────────────────────────────────────────
 section('۷) بسته‌بندی: حجم کافی و کمینهٔ قیمت');
 // ─────────────────────────────────────────────────────────────
