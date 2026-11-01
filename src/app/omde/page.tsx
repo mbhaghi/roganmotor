@@ -63,7 +63,7 @@ export default function WholesalePage() {
       <Breadcrumb items={[{ name: 'خرید عمده', href: '/omde' }]} />
 
       <header className="relative mt-4 overflow-hidden rounded-2xl">
-        <Image src={IMG.workshop} alt="" fill priority sizes="100vw" className="object-cover" />
+        <Image src={IMG.warehouse} alt="" fill priority sizes="100vw" className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-l from-brand-950/95 via-brand-950/82 to-brand-950/45" />
         <div className="relative max-w-3xl p-8 sm:p-10">
           <span className="badge-gold">🏭 بخش B2B</span>

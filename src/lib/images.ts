@@ -18,17 +18,17 @@ export const IMG = {
   workshop: '/img/workshop-mechanic.jpg',
   lab: '/img/lab-quality.jpg',
   texture: '/img/oil-texture.jpg',
+  warehouse: '/img/warehouse-b2b.jpg',
 } as const;
 
-/** تصویر هر دستهٔ محصول؛ برای دسته‌هایی که عکس اختصاصی ندارند بافت روغن استفاده می‌شود */
+/** تصویر هر دستهٔ محصول */
 export const CATEGORY_IMG: Record<string, string> = {
   'roghan-motor': '/img/cat-car-oil.jpg',
   'dizel-sangin': '/img/cat-truck-diesel.jpg',
   'motor-siklet': '/img/cat-motorcycle.jpg',
   girbox: '/img/cat-gearbox.jpg',
-  // عکس اختصاصی این دو در نوبت بعد ساخته می‌شود؛ موقتاً بافت روغن
-  'mayeat-janebi': IMG.texture,
-  afzoudani: IMG.texture,
+  'mayeat-janebi': '/img/cat-fluids.jpg',
+  afzoudani: '/img/cat-additives.jpg',
 };
 
 export function categoryImg(slug: string): string {

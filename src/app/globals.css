@@ -296,3 +296,61 @@
   .kenburns { animation: none !important; }
   .scroll-cue { animation: none !important; }
 }
+
+/* ════════════════════════════════════════════════════════════
+   ویزارد روغن‌یاب — حس اپلیکیشن، موبایل‌اول
+   ════════════════════════════════════════════════════════════ */
+
+/* ورود هر مرحله با اسلاید ملایم (در RTL از راست وارد می‌شود) */
+.wizard-step {
+  animation: wizard-step-in 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes wizard-step-in {
+  from { opacity: 0; transform: translate3d(22px, 0, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+/* کارت انتخاب نوع وسیله — عکس تمام‌عرض با برچسب */
+.type-tile {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 1rem;
+  isolation: isolate;
+}
+.type-tile .type-img {
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.type-tile:hover .type-img,
+.type-tile:focus-visible .type-img { transform: scale(1.06); }
+.type-tile[aria-pressed='true'] {
+  outline: 3px solid #e3b03d;
+  outline-offset: 2px;
+}
+
+/* دکمه‌های بزرگ لمسی (حداقل ۴۸px برای انگشت) */
+.tap {
+  min-height: 48px;
+}
+
+/* نوار اقدام چسبان پایین کارت ویزارد */
+.wizard-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+/* نقطه‌های پیشرفت */
+.step-dot {
+  height: 6px;
+  border-radius: 999px;
+  transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wizard-step { animation: none !important; }
+  .type-tile .type-img { transition: none !important; }
+}
