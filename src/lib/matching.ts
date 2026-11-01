@@ -54,12 +54,122 @@ function wPart(sae: string): string {
   return sae.split('W')[0] + 'W';
 }
 
+/**
+ * نردبان کیفیت API بنزینی — هر رده، رده‌های پایین‌تر از خودش را پوشش می‌دهد
+ * (API SP یک موتور API SL را بدون اشکال روانکاری می‌کند، اما نه برعکس).
+ */
+const API_GASOLINE_LADDER = ['SG', 'SJ', 'SL', 'SM', 'SN', 'SP'];
+
+/**
+ * نردبان API دیزل.
+ *
+ * ⚠️ FA-4 عمداً در این نردبان نیست. FA-4 با HTHS بین ۲٫۹ تا ۳٫۲ ساخته شده و
+ * سازگار رو‌به‌عقب نیست (docs/02 §2.3): یک موتور که CK-4 می‌خواهد نباید FA-4
+ * بگیرد، چون فیلم روغن نازک‌تر از چیزی است که یاتاقان‌های آن موتور برای آن
+ * طراحی شده‌اند. جهت جایگزینی فقط یک‌طرفه است: CK-4 (HTHS ≥۳٫۵) می‌تواند در
+ * موتوری که FA-4 خواسته استفاده شود، اما FA-4 هرگز جای CK-4 را نمی‌گیرد.
+ */
+const API_DIESEL_LADDER = ['CF-4', 'CG-4', 'CH-4', 'CI-4', 'CJ-4', 'CK-4'];
+
+const API_TOKEN_RE = /\b(?:SP|SN PLUS|SN|SM|SL|SJ|SG|CK-4|FA-4|CJ-4|CI-4|CH-4|CG-4|CF-4)\b/g;
+
+/**
+ * حداقل کلاس API لازم را از رشتهٔ آزاد `apiRequired` استخراج می‌کند.
+ *
+ * دادهٔ دفترچه به‌صورت متن آزاد است («API SL یا بالاتر»، «API SN / SP»)، پس
+ * باید پارس شود. قاعده: **پایین‌ترین** ردهٔ ذکرشده کفِ قابل قبول است، چون
+ * عبارت «یا بالاتر» در همهٔ این رکوردها صریحاً همان رده را کف اعلام کرده.
+ * گرفتن بالاترین رده اشتباه بود: «API SN / SP» یعنی هر دو پذیرفته‌اند، نه
+ * اینکه فقط SP مجاز باشد.
+ *
+ * رشته‌هایی که کد API ندارند («نیازمند تأیید») → null، یعنی هیچ دروازه‌ای
+ * اعمال نشود. آن خودروها در عمل توسط canRecommend مسدودند.
+ */
+function parseApiRequirement(raw: string, fuel: Vehicle['fuel']): string | null {
+  const tokens = (raw.toUpperCase().match(API_TOKEN_RE) ?? []).map((t) => t.trim());
+  if (tokens.length === 0) return null;
+  const ladder = fuel === 'diesel' ? API_DIESEL_LADDER : API_GASOLINE_LADDER;
+
+  const ranked = tokens
+    .filter((t) => ladder.includes(t))
+    .sort((a, b) => ladder.indexOf(a) - ladder.indexOf(b));
+  if (ranked.length > 0) return ranked[0];
+
+  // FA-4 در نردبان دیزل نیست؛ اگر تنها کد ذکرشده باشد، همان کف است
+  if (tokens.includes('FA-4')) return 'FA-4';
+  return null;
+}
+
+/** آیا محصول کفِ API لازم را برآورده می‌کند؟ */
+function apiSatisfied(product: Product, required: string, fuel: Vehicle['fuel']): boolean {
+  const owned = product.api.map((a) => a.toUpperCase());
+  if (owned.includes(required)) return true;
+
+  if (fuel === 'diesel') {
+    // CK-4 می‌تواند جای FA-4 بنشیند (HTHS بالاتر = محافظت بیشتر)، نه برعکس
+    if (required === 'FA-4') return owned.includes('CK-4');
+    const reqIdx = API_DIESEL_LADDER.indexOf(required);
+    if (reqIdx < 0) return false;
+    return owned.some((a) => {
+      const i = API_DIESEL_LADDER.indexOf(a);
+      return i >= 0 && i >= reqIdx;
+    });
+  }
+
+  const reqIdx = API_GASOLINE_LADDER.indexOf(required);
+  if (reqIdx < 0) return false;
+  return owned.some((a) => {
+    const i = API_GASOLINE_LADDER.indexOf(a);
+    return i >= 0 && i >= reqIdx;
+  });
+}
+
+/**
+ * حوضهٔ نامزدهای روغن برای یک وسیله.
+ *
+ * این تفکیک یک قانون سخت است، نه یک بهینه‌سازی امتیازدهی. سه دسته محصول
+ * مکانیسم‌های متفاوتی دارند و جایگزین یکدیگر نمی‌شوند:
+ *   - روغن سواری: اصلاح‌کنندهٔ اصطکاک دارد → کلاچ غوطه‌ور را می‌لغزاند
+ *   - روغن موتور سیکلت MA/MA2: بدون اصلاح‌کنندهٔ اصطکاک → برای کلاچ تر
+ *   - روغن دیزل سنگین: خاکستر و TBN متفاوت → برای کارتر بزرگ و پس‌درمانی دیزل
+ *
+ * پیش از این، حوضهٔ نامزدها `roghan-motor || dizel-sangin` بود؛ یعنی روغن
+ * موتور سیکلت اصلاً نامزد نمی‌شد و موتور سیکلت کلاچ‌دار روغن سواری می‌گرفت.
+ */
+const POOL_BY_VEHICLE_TYPE: Record<Vehicle['vehicleType'], string[]> = {
+  car: ['roghan-motor'],
+  truck: ['dizel-sangin'],
+  motorcycle: ['motor-siklet'],
+};
+
+function candidatePool(v: Vehicle): Product[] {
+  const cats = POOL_BY_VEHICLE_TYPE[v.vehicleType] ?? ['roghan-motor'];
+  return PRODUCTS.filter((p) => cats.includes(p.category));
+}
+
 /** امتیازدهی یک محصول برای یک خودرو */
 function score(product: Product, input: MatchInput): { score: number; reasons: string[]; warnings: string[] } {
   const v = input.vehicle;
   let s = 0;
   const reasons: string[] = [];
   const warnings: string[] = [];
+
+  // ── Step 1: کلاچ غوطه‌ور در روغن (قانون سخت) ──────────────
+  // موتور سیکلت دنده‌ای موتور، گیربکس و کلاچ را در یک کارتر مشترک دارد.
+  // روغن دارای اصلاح‌کنندهٔ اصطکاک باعث بکسواد کلاچ می‌شود و این آسیب با
+  // تعویض روغن همیشه برگشت‌پذیر نیست. پس این یک ردِ سخت است، نه کسر امتیاز.
+  if (v.wetClutch) {
+    const jasoOk = product.jaso.some((j) => j === 'MA2' || j === 'MA');
+    if (!product.wetClutchOk && !jasoOk) {
+      return {
+        score: -1,
+        reasons: [],
+        warnings: ['برای کلاچ غوطه‌ور در روغن مناسب نیست؛ فقط JASO MA/MA2 مجاز است.'],
+      };
+    }
+    s += 30;
+    reasons.push('موتور سیکلت کلاچ‌دار است؛ روغن JASO MA/MA2 از بکسواد کلاچ جلوگیری می‌کند.');
+  }
 
   // ── Step 2: سازگاری با پس‌فرآیند (قانون سخت) ──────────────
   if (v.hasDpf || v.hasGpf) {
@@ -73,6 +183,22 @@ function score(product: Product, input: MatchInput): { score: number; reasons: s
   // ── ویسکوزیته باید داخل پنجرهٔ مجاز باشد (قانون سخت) ──────
   if (v.saeAllowed.length > 0 && !v.saeAllowed.includes(product.saeGrade)) {
     return { score: -1, reasons: [], warnings: [`گرید ${product.saeGrade} در فهرست مجاز دفترچه نیست.`] };
+  }
+
+  // ── کفِ سطح کیفی API دفترچه باید برآورده شود (قانون سخت) ────
+  // پیش از این فیلد apiRequired هرگز خوانده نمی‌شد. نتیجه‌اش این بود که
+  // کامیونی با الزام «API CK-4» روغن FA-4 پیشنهاد می‌گرفت — و FA-4 سازگار
+  // رو‌به‌عقب نیست (HTHS ۲٫۹–۳٫۲ در برابر ≥۳٫۵ برای CK-4). این دقیقاً همان
+  // «پیشنهاد موتورسوز» است که دروازهٔ ایمنی برای جلوگیری از آن طراحی شده.
+  const requiredApi = parseApiRequirement(v.apiRequired, v.fuel);
+  if (requiredApi && !apiSatisfied(product, requiredApi, v.fuel)) {
+    return {
+      score: -1,
+      reasons: [],
+      warnings: [
+        `سطح API این روغن (${product.api.join(' / ') || '—'}) کفِ الزام دفترچه (${requiredApi}) را برآورده نمی‌کند.`,
+      ],
+    };
   }
 
   // ── تطابق دقیق با گرید ترجیحی ────────────────────────────
@@ -90,9 +216,25 @@ function score(product: Product, input: MatchInput): { score: number; reasons: s
     s -= 15;
   }
 
-  // ── Step 3: توربو + GDI → حداقل API SP ───────────────────
+  // ── Step 3: توربو → حداقل سطح کیفی (سوخت‌آگاه) ────────────
+  // پیش از این فقط API بنزینی سنجیده می‌شد. در نتیجه روغن دیزل CK-4 که به‌طور
+  // هم‌زمان «SN» هم دارد (رایج در روغن‌های دیزل-بنزینی مشترک) یک هشدار بی‌معنی
+  // بنزینی می‌گرفت و چون scored هشدارها را حذف می‌کند، از فهرست پیشنهاد بیرون
+  // می‌افتاد — آکتروس در نتیجه هیچ پیشنهادی نداشت و به fallback می‌رفت.
   if (v.aspiration === 'turbo') {
-    if (product.api.includes('SP')) {
+    if (v.fuel === 'diesel') {
+      const dieselRank = product.api
+        .map((a) => API_DIESEL_LADDER.indexOf(a.toUpperCase()))
+        .filter((i) => i >= 0)
+        .sort((a, b) => b - a)[0];
+      if (dieselRank !== undefined && dieselRank >= API_DIESEL_LADDER.indexOf('CJ-4')) {
+        s += 18;
+        reasons.push('موتور دیزل توربو است؛ سطح CJ-4 به بالا پایداری اکسیداسیون و کنترل رسوب را تضمین می‌کند.');
+      } else if (dieselRank !== undefined) {
+        s -= 25;
+        warnings.push('سطح API این روغن برای موتور دیزل توربو پایین است.');
+      }
+    } else if (product.api.includes('SP')) {
       s += 18;
       reasons.push('موتور توربو است؛ API SP محافظت LSPI و سایش زنجیر تایم را تضمین می‌کند.');
     } else if (product.api.includes('SN')) {
@@ -189,12 +331,14 @@ export function findOil(input: MatchInput): MatchResult {
     };
   }
 
-  const scored = PRODUCTS.filter((p) => p.category === 'roghan-motor' || p.category === 'dizel-sangin')
+  const pool = candidatePool(v);
+
+  const scored = pool
     .map((p) => ({ product: p, ...score(p, input) }))
     .filter((r) => r.score >= 0 && r.warnings.length === 0)
     .sort((a, b) => b.score - a.score);
 
-  const withWarnings = PRODUCTS.filter((p) => p.category === 'roghan-motor')
+  const withWarnings = pool
     .map((p) => ({ product: p, ...score(p, input) }))
     .filter((r) => r.score >= 0 && r.warnings.length > 0)
     .sort((a, b) => b.score - a.score)
