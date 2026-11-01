@@ -4,6 +4,7 @@ import { PRODUCTS } from '@/lib/products';
 import { VEHICLES } from '@/lib/vehicles';
 import { SPECS } from '@/lib/specs';
 import { ARTICLES } from '@/lib/articles';
+import { isNoindex } from '@/lib/seo';
 
 /**
  * sitemap.xml — الزام سئوی فنی (docs/04 بخش ۴٫۵).
@@ -23,10 +24,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE.url}/danesh`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${SITE.url}/omde`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${SITE.url}/servis/yadavar`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${SITE.url}/darbare`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${SITE.url}/temas`, lastModified: now, changeFrequency: 'yearly', priority: 0.5 },
-    { url: `${SITE.url}/hoghughi/sharayet`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${SITE.url}/hoghughi/marjoui`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
-    { url: `${SITE.url}/hoghughi/harim-khosoosi`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
+    // صفحات /hoghughi/ عمداً اینجا نیستند: در robots.txt مسدودند و فهرست‌کردنشان
+    // سیگنال متناقض به خزنده می‌داد. /senario-ha هم noindex است.
   ];
 
   // صفحهٔ فرود هر دسته — مسیر استاتیک واقعی، نه query string (قابل ایندکس)
@@ -68,7 +69,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [
+  const all = [
     ...staticPages,
     ...categoryPages,
     ...productPages,
@@ -76,4 +77,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...specPages,
     ...articlePages,
   ];
+
+  // فیلتر ساختاری: هیچ URL مسدود در robots.txt وارد sitemap نمی‌شود، حتی اگر
+  // کسی بعداً سهواً دستی اضافه‌اش کند. این همان واگرایی است که قبلاً رخ داد.
+  return all.filter((entry) => !isNoindex(new URL(entry.url).pathname));
 }
