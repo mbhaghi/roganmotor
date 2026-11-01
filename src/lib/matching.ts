@@ -4,15 +4,30 @@ import type { Product, SpecPage, Vehicle } from './types';
 
 /**
  * موتور تطبیق روغن‌یاب.
- * الگوریتم دقیقاً همان چیزی است که در docs/01 بخش ۱٫۸ مستند شده:
+ * الگوریتم همان چیزی است که در docs/01 بخش ۱٫۸ مستند شده.
+ * قواعد با `npm run verify` بازسنجی می‌شوند — پیش از تغییر منطق، آن را اجرا کنید.
  *
+ * گام صفر → تفکیک نوع وسیله (سواری / کامیون / موتور سیکلت) با candidatePool.
+ *           پیش از هر امتیازدهی حوضهٔ نامزدها محدود می‌شود؛ وگرنه روغنِ
+ *           اصلاح‌شدهٔ اصطکاکیِ خودرو به موتور کلاچ‌دار می‌رسد و کلاچ می‌سوزد.
+ *
+ * چهار دروازهٔ سخت — رد شدن یعنی حذف محصول، نه امتیاز منفی:
+ *   Gate 1 → کلاچ غوطه‌ور: فقط JASO MA/MA2 یا wetClutchOk
+ *   Gate 2 → DPF/GPF: فقط کلاس C (Low/Mid SAPS)، Full-SAPS ممنوع
+ *   Gate 3 → پنجرهٔ SAE: گرید باید داخل فهرست مجاز دفترچه باشد
+ *   Gate 4 → کف API دفترچه (parseApiRequirement + apiSatisfied)؛ با قاعدهٔ
+ *            یک‌طرفهٔ دیزل: CK-4 می‌تواند جای FA-4 بنشیند، نه برعکس.
+ *
+ * سپس امتیازدهی روی بازماندگان:
  *   Step 1 → «سقف» مشخصات از دفترچه (کد ACEA و/یا تأییدیهٔ OEM و ویسکوزیتهٔ مجاز)
  *   Step 2 → اگر DPF/GPF دارد → فقط کلاس C
- *   Step 3 → اگر توربو GDI است → حداقل API SP
+ *   Step 3 → اگر توربو است → حداقل API مناسبِ همان سوخت
+ *            (بنزینی TGDI → API SP؛ دیزلی → دست‌کم CJ-4/CK-4)
  *   Step 4 → ویسکوزیته از لیست مجاز، بر اساس اقلیم
  *   Step 5 → کارکرد بالا → High Mileage در همان ویسکوزیتهٔ مجاز
  *   Step 6 → حجم روغن (با و بدون فیلتر)
- *   Step 7 → فاصلهٔ تعویض عادی در برابر شرایط سخت
+ *   Step 7 → بسته‌بندی با هدف کمینهٔ قیمت کل (planBottles)
+ *   Step 8 → فاصلهٔ تعویض عادی در برابر شرایط سخت
  */
 
 export interface MatchInput {
@@ -285,25 +300,127 @@ function score(product: Product, input: MatchInput): { score: number; reasons: s
   return { score: s, reasons, warnings };
 }
 
-/** انتخاب بسته‌بندی بهینه بر اساس حجم مورد نیاز */
-function planBottles(product: Product, neededLiters: number): { liters: number; count: number }[] {
-  const sizes = product.volumes.map((v) => v.liters).filter((l) => l >= 0.5).sort((a, b) => b - a);
-  const plan: { liters: number; count: number }[] = [];
+interface BottleOption {
+  liters: number;
+  price: number;
+}
+
+interface BottlePlan {
+  counts: number[];
+  price: number;
+  liters: number;
+  bottles: number;
+}
+
+/**
+ * پرکردن حریصانه — فقط به‌عنوان یدکِ محافظ در برابر دادهٔ غیرمنتظره.
+ * بهینه نیست (قیمت را نمی‌بیند) ولی همیشه جواب شدنی تولید می‌کند.
+ */
+function greedyPlan(options: BottleOption[], neededLiters: number): BottlePlan {
+  const counts = new Array(options.length).fill(0);
   let remaining = neededLiters;
-  for (const size of sizes) {
-    const n = Math.floor(remaining / size);
+  options.forEach((o, i) => {
+    const n = Math.floor(remaining / o.liters);
     if (n > 0) {
-      plan.push({ liters: size, count: n });
-      remaining -= n * size;
+      counts[i] = n;
+      remaining -= n * o.liters;
     }
+  });
+  if (remaining > 1e-9) counts[options.length - 1] += 1;
+
+  let price = 0;
+  let liters = 0;
+  counts.forEach((c, i) => {
+    price += c * options[i].price;
+    liters += c * options[i].liters;
+  });
+  return { counts, price, liters, bottles: counts.reduce((a, b) => a + b, 0) };
+}
+
+/**
+ * انتخاب بهینهٔ بسته‌بندی برای حجم مورد نیاز.
+ *
+ * هدف: **کمینه‌کردن قیمت کل خرید**، به شرط آنکه حجم کل ≥ نیاز باشد.
+ *
+ * چرا قیمت و نه حجم: بسته‌های بزرگ‌تر قیمت هر لیتر پایین‌تری دارند (در دادهٔ
+ * نمونه ۴ لیتری ۵۰۰٬۰۰۰ تومان است در برابر ۴×۱ لیتری ۵۶۰٬۰۰۰ تومان). نسخهٔ
+ * قبلی حریصانه بود و فقط حجم را پر می‌کرد؛ در نتیجه برای پراید با نیاز ۳٫۴ لیتر
+ * چهار بطری یک‌لیتری پیشنهاد می‌داد — هم ۶۰٬۰۰۰ تومان گران‌تر، هم برای مشتری
+ * گیج‌کننده. این در ۹ مورد از ۱۵ خودروی پایگاه اتفاق می‌افتاد.
+ *
+ * ترتیب اولویت هنگام مقایسهٔ دو ترکیب:
+ *   ۱. کمترین قیمت کل
+ *   ۲. کمترین تعداد بطری (در قیمت برابر — راحت‌تر برای حمل و انبار)
+ *   ۳. کمترین حجم اضافی (در تساوی کامل — هدر نرفتن روغن)
+ *
+ * فضای جست‌وجو عمداً کوچک نگه داشته شده: هر ظرف بیش از دو برابرِ کلِ نیاز
+ * کنار گذاشته می‌شود، چون برای خرید خرد منطقی نیست (سطل ۲۰ لیتری برای موتوری
+ * که ۱ لیتر روغن می‌خواهد). نیاز ناوگان به بشکه از مسیر جداگانهٔ /omde و
+ * فیلد wholesaleTiers تأمین می‌شود، نه از اینجا.
+ */
+export function planBottles(product: Product, neededLiters: number): { liters: number; count: number }[] {
+  if (!(neededLiters > 0)) return [];
+
+  const all = product.volumes
+    .filter((v) => v.liters >= 0.5 && v.price > 0)
+    .map((v) => ({ liters: v.liters, price: v.price }));
+  if (all.length === 0) return [];
+
+  let options = all.filter((o) => o.liters <= neededLiters * 2);
+  if (options.length === 0) {
+    // هیچ ظرفی در کرانِ خرده‌فروشی نبود → کوچک‌ترین ظرف موجود تنها گزینهٔ معقول است
+    options = [[...all].sort((a, b) => a.liters - b.liters)[0]];
   }
-  if (remaining > 0.05) {
-    const smallest = sizes[sizes.length - 1] ?? 1;
-    const last = plan[plan.length - 1];
-    if (last && last.liters === smallest) last.count += 1;
-    else plan.push({ liters: smallest, count: 1 });
+  options = [...options].sort((a, b) => b.liters - a.liters);
+
+  const maxCounts = options.map((o) => Math.floor(neededLiters / o.liters) + 1);
+  const searchSpace = maxCounts.reduce((acc, n) => acc * (n + 1), 1);
+
+  let best: BottlePlan | null = null;
+
+  const better = (cand: BottlePlan, cur: BottlePlan | null): boolean => {
+    if (!cur) return true;
+    if (Math.abs(cand.price - cur.price) > 1e-9) return cand.price < cur.price;
+    if (cand.bottles !== cur.bottles) return cand.bottles < cur.bottles;
+    return cand.liters < cur.liters;
+  };
+
+  if (searchSpace > 200_000) {
+    // محافظ در برابر دادهٔ غیرمنتظره؛ با کرانِ بالا عملاً هرگز رخ نمی‌دهد
+    best = greedyPlan(options, neededLiters);
+  } else {
+    const counts = new Array(options.length).fill(0);
+    const walk = (i: number) => {
+      if (i === options.length) {
+        let price = 0;
+        let liters = 0;
+        let bottles = 0;
+        for (let k = 0; k < options.length; k++) {
+          price += counts[k] * options[k].price;
+          liters += counts[k] * options[k].liters;
+          bottles += counts[k];
+        }
+        if (liters + 1e-9 < neededLiters) return; // حجم ناکافی → جواب شدنی نیست
+        const cand = { counts: counts.slice(), price, liters, bottles };
+        if (better(cand, best)) best = cand;
+        return;
+      }
+      for (let c = 0; c <= maxCounts[i]; c++) {
+        counts[i] = c;
+        walk(i + 1);
+      }
+      counts[i] = 0;
+    };
+    walk(0);
+
+    if (!best) best = greedyPlan(options, neededLiters);
   }
-  return plan;
+
+  const chosen = best as BottlePlan;
+  return options
+    .map((o, i) => ({ liters: o.liters, count: chosen.counts[i] }))
+    .filter((x) => x.count > 0)
+    .sort((a, b) => b.liters - a.liters);
 }
 
 export function findOil(input: MatchInput): MatchResult {
