@@ -119,7 +119,7 @@ export default function HomePage() {
             {CATEGORIES.map((c) => (
               <Link
                 key={c.slug}
-                href={`/mahsolat?cat=${c.slug}`}
+                href={`/daste/${c.slug}`}
                 className="card group flex items-start gap-4 p-5 transition-all hover:-translate-y-0.5 hover:border-brand-300"
               >
                 <span className="grid h-12 w-12 shrink-0 place-items-center rounded-lg bg-brand-50 text-2xl transition-colors group-hover:bg-brand-100">

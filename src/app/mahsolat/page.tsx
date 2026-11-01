@@ -1,10 +1,11 @@
 import Link from 'next/link';
-import { PRODUCTS } from '@/lib/products';
-import { CATEGORIES } from '@/lib/config';
+import { SITE } from '@/lib/config';
+import { PRODUCTS, fromPrice } from '@/lib/products';
+import { activeCategories } from '@/lib/categories';
 import { ProductGrid } from '@/components/ProductCard';
 import { Breadcrumb } from '@/components/Breadcrumb';
-import { fromPrice } from '@/lib/products';
-import { faPrice, faDecimal, BASE_TYPE_FA } from '@/lib/format';
+import { JsonLd, breadcrumbJsonLd } from '@/components/JsonLd';
+import { faPrice, faDecimal, faNumber, BASE_TYPE_FA } from '@/lib/format';
 
 export const metadata = {
   title: 'محصولات — روغن موتور، گیربکس، گریس و سیال‌های جانبی',
@@ -13,65 +14,56 @@ export const metadata = {
   alternates: { canonical: '/mahsolat' },
 };
 
-export default async function ProductsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ cat?: string }>;
-}) {
-  const { cat } = await searchParams;
-  const list = cat ? PRODUCTS.filter((p) => p.category === cat) : PRODUCTS;
-  const activeCat = CATEGORIES.find((c) => c.slug === cat);
+/**
+ * فهرست همهٔ محصولات.
+ *
+ * دسته‌بندی‌ها دیگر query string نیستند؛ هر دسته یک صفحهٔ فرود استاتیک در
+ * /daste/[slug] دارد تا قابل ایندکس باشد. این صفحه در نتیجه استاتیک می‌ماند.
+ */
+export default function ProductsPage() {
+  const cats = activeCategories();
 
   return (
     <div className="container-site py-8">
-      <Breadcrumb
-        items={[
-          { name: 'محصولات', href: '/mahsolat' },
-          ...(activeCat ? [{ name: activeCat.name, href: `/mahsolat?cat=${cat}` }] : []),
-        ]}
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: 'خانه', url: `${SITE.url}/` },
+          { name: 'محصولات', url: `${SITE.url}/mahsolat` },
+        ])}
       />
+      <Breadcrumb items={[{ name: 'محصولات', href: '/mahsolat' }]} />
 
       <header>
-        <h1 className="section-title">{activeCat ? activeCat.name : 'همهٔ محصولات'}</h1>
+        <h1 className="section-title">همهٔ محصولات</h1>
         <p className="section-sub">
-          {activeCat
-            ? activeCat.blurb
-            : 'یک برند، کل سبد روانکاری. هر محصول با مشخصات فنی کامل، تأییدیه‌های تفکیک‌شده و برگهٔ TDS قابل دانلود.'}
+          یک برند، کل سبد روانکاری. هر محصول با مشخصات فنی کامل، تأییدیه‌های تفکیک‌شده و برگهٔ TDS قابل دانلود.
         </p>
       </header>
 
-      {/* فیلتر دسته — در سایت تک‌برندی «فیلتر برند» وجود ندارد، پس ناوبری باید بر اساس کاربرد باشد */}
-      <nav className="mt-6 flex flex-wrap gap-2" aria-label="دسته‌بندی محصولات">
-        <Link
-          href="/mahsolat"
-          className={`badge border px-3 py-1.5 text-sm ${
-            !cat ? 'border-brand-600 bg-brand-700 text-white' : 'border-slate-300 bg-white text-ink-soft hover:border-brand-400'
-          }`}
-        >
-          همه ({PRODUCTS.length.toLocaleString('fa-IR')})
-        </Link>
-        {CATEGORIES.map((c) => {
-          const n = PRODUCTS.filter((p) => p.category === c.slug).length;
-          if (n === 0) return null;
-          return (
-            <Link
-              key={c.slug}
-              href={`/mahsolat?cat=${c.slug}`}
-              className={`badge border px-3 py-1.5 text-sm ${
-                cat === c.slug
-                  ? 'border-brand-600 bg-brand-700 text-white'
-                  : 'border-slate-300 bg-white text-ink-soft hover:border-brand-400'
-              }`}
-            >
-              {c.icon} {c.name} ({n.toLocaleString('fa-IR')})
-            </Link>
-          );
-        })}
+      {/* ناوبری بر اساس کاربرد — در سایت تک‌برندی «فیلتر برند» معنا ندارد */}
+      <nav className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="دسته‌بندی محصولات">
+        {cats.map((c) => (
+          <Link key={c.slug} href={`/daste/${c.slug}`} className="card flex items-center gap-3 hover:border-brand-400">
+            <span className="text-2xl" aria-hidden>{c.icon}</span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-bold text-ink">{c.name}</span>
+              <span className="block truncate text-xs text-ink-mute">{c.blurb}</span>
+            </span>
+            <span className="num shrink-0 text-xs font-bold text-brand-700" dir="ltr">
+              {faNumber(c.count)}
+            </span>
+          </Link>
+        ))}
       </nav>
 
-      <div className="mt-8">
-        <ProductGrid products={list} />
-      </div>
+      <section className="mt-10">
+        <h2 className="text-xl font-extrabold text-ink">
+          همهٔ محصولات <span className="num text-sm font-semibold text-ink-mute">({faNumber(PRODUCTS.length)})</span>
+        </h2>
+        <div className="mt-4">
+          <ProductGrid products={PRODUCTS} />
+        </div>
+      </section>
 
       {/* جدول مقایسهٔ سریع — جبران نبود «مقایسهٔ برند» در فروشگاه تک‌برندی */}
       <section className="mt-14">
@@ -135,6 +127,13 @@ export default async function ProductsPage({
             </tbody>
           </table>
         </div>
+        <p className="mt-3 text-xs text-ink-mute">
+          برای روغن گیربکس، دیزل سنگین و سیال‌های جانبی به{' '}
+          <Link href="/mahsolat" className="text-brand-700 underline">
+            صفحهٔ هر دسته
+          </Link>{' '}
+          بروید — جدول بالا فقط روغن موتور سواری را پوشش می‌دهد.
+        </p>
       </section>
 
       <div className="mt-10 rounded-xl border border-slate-200 bg-slate-50 p-6 text-center">

@@ -68,7 +68,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <Breadcrumb
           items={[
             { name: 'محصولات', href: '/mahsolat' },
-            ...(category ? [{ name: category.name, href: `/mahsolat?cat=${category.slug}` }] : []),
+            ...(category ? [{ name: category.name, href: `/daste/${category.slug}` }] : []),
             { name: product.name, href: `/mahsolat/${product.slug}` },
           ]}
         />
@@ -313,7 +313,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                   مدار می‌شود.
                 </p>
               </div>
-              <Link href="/mahsolat?cat=afzoudani" className="btn-outline">
+              <Link href="/daste/afzoudani" className="btn-outline">
                 همهٔ اقلام سرویس
               </Link>
             </div>

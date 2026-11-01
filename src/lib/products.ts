@@ -389,7 +389,8 @@ export const PRODUCTS: Product[] = [
     hthsMin: 3.5,
     dpfOk: true,
     gpfOk: false,
-    turboGdiOk: true,
+    turboGdiOk: false,
+    // LSPI/GDI پدیدهٔ موتور بنزینی است؛ روغن دیزل سنگین این پرچم را ندارد
     hybridOk: false,
     techSpec: {
       viscosity40C: 112.0,
@@ -445,7 +446,8 @@ export const PRODUCTS: Product[] = [
     hthsMin: 2.9,
     dpfOk: true,
     gpfOk: false,
-    turboGdiOk: true,
+    turboGdiOk: false,
+    // LSPI/GDI پدیدهٔ موتور بنزینی است؛ روغن دیزل سنگین این پرچم را ندارد
     hybridOk: false,
     techSpec: {
       viscosity40C: 68.0,

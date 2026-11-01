@@ -11,6 +11,7 @@ export const SPECS: SpecPage[] = [
     title: 'ACEA C3 چیست و برای چه خودروهایی؟',
     kind: 'acea',
     code: 'ACEA C3',
+    matchCodes: ['C3'],
     summary:
       'کلاس Mid-SAPS با حداقل HTHS برابر ۳٫۵ mPa·s برای موتورهای بنزینی و دیزل سبک دارای کاتالیزور، DPF یا GPF.',
     body: [
@@ -44,6 +45,7 @@ export const SPECS: SpecPage[] = [
     title: 'ACEA A3/B4 چیست و کجا نباید استفاده شود؟',
     kind: 'acea',
     code: 'ACEA A3/B4',
+    matchCodes: ['A3/B4'],
     summary:
       'کلاس Full-SAPS پایدار در درجه، با حداقل HTHS برابر ۳٫۵ mPa·s، برای موتورهای بنزینی و دیزل سبک بدون محدودیت پس‌فرآیند.',
     body: [
@@ -67,6 +69,7 @@ export const SPECS: SpecPage[] = [
     title: 'API SP چیست و چه فرقی با SN Plus دارد؟',
     kind: 'api',
     code: 'API SP',
+    matchCodes: ['SP'],
     summary:
       'جاری‌ترین دستهٔ API برای موتورهای بنزینی، معرفی‌شده در ۱ مهٔ ۲۰۲۰؛ جایگزین SN و SN Plus و کاملاً سازگار رو‌به‌عقب.',
     body: [
@@ -100,6 +103,7 @@ export const SPECS: SpecPage[] = [
     title: 'ILSAC GF-6A و GF-6B چه تفاوتی دارند؟',
     kind: 'ilsac',
     code: 'ILSAC GF-6',
+    matchCodes: ['GF-6A', 'GF-6B'],
     summary:
       'استاندارد مشترک آمریکا و ژاپن که علاوه بر حفاظت موتور، اقتصاد سوخت را هم تست می‌کند. GF-6B فقط برای 0W-16 است.',
     body: [
@@ -121,6 +125,9 @@ export const SPECS: SpecPage[] = [
     title: 'SAPS، DPF و GPF — چرا خاکستر فیلتر را می‌کُشد؟',
     kind: 'acea',
     code: 'SAPS / DPF / GPF',
+    // صفحهٔ مفهومی — کد استاندارد ندارد؛ روی پرچم سازگاری فیلتر می‌شود
+    matchCodes: [],
+    matchFilter: (p) => p.dpfOk || p.gpfOk,
     summary:
       'فیلتر ذرات فقط دوده را می‌سوزاند؛ خاکستر روغن را هرگز نمی‌تواند حذف کند. به همین دلیل خودروهای فیلتردار به روغن کلاس C نیاز دارند.',
     body: [
@@ -144,6 +151,7 @@ export const SPECS: SpecPage[] = [
     title: 'VW 504 00 و VW 507 00 — توضیح کامل',
     kind: 'oem',
     code: 'VW 504 00 / 507 00',
+    matchCodes: ['VW 504 00', 'VW 507 00'],
     summary:
       'استانداردهای LongLife گروه فولکس‌واگن برای موتورهای بنزینی و دیزلی؛ سازگار رو‌به‌عقب با 502 00 و 505 00.',
     body: [
@@ -167,6 +175,7 @@ export const SPECS: SpecPage[] = [
     title: 'MB 229.51 و MB 229.52 چه فرقی دارند؟',
     kind: 'oem',
     code: 'MB 229.51 / 229.52',
+    matchCodes: ['MB 229.51', 'MB 229.52'],
     summary:
       'استانداردهای مرسدس بنز برای روغن Low/Mid-SAPS سازگار با DPF؛ 229.52 نسخهٔ به‌روزتر با الزامات سخت‌گیرانه‌تر است.',
     body: [
@@ -189,6 +198,7 @@ export const SPECS: SpecPage[] = [
     title: 'API CK-4 در برابر FA-4 — چرا FA-4 در کامیون قدیمی فاجعه است؟',
     kind: 'api',
     code: 'API CK-4 / FA-4',
+    matchCodes: ['CK-4', 'FA-4'],
     summary:
       'هر دو در ۲۰۱۶ از دستهٔ PC-11 آمدند، اما CK-4 سازگار رو‌به‌عقب است و FA-4 نیست.',
     body: [
@@ -211,6 +221,7 @@ export const SPECS: SpecPage[] = [
     title: 'دسته‌های سنگین ACEA: E4، E7، E8، E11 و F01',
     kind: 'acea',
     code: 'ACEA E / F',
+    matchCodes: ['E4', 'E7', 'E8', 'E9', 'E11', 'F01'],
     summary:
       'سیکوئنس جاری سنگین ACEA 2024 Revision 1 است؛ E6 با E8 و E9 با E11 جایگزین شدند و دستهٔ جدید F01 آمد.',
     body: [
@@ -234,6 +245,7 @@ export const SPECS: SpecPage[] = [
     title: 'ACEA C6 و C7 — روغن‌های ویسکوزیتهٔ پایین نسل جدید',
     kind: 'acea',
     code: 'ACEA C6 / C7',
+    matchCodes: ['C5', 'C6', 'C7'],
     summary:
       'C6 برای گرید 0W-20 با محافظت LSPI و رسوب توربو؛ C7 جدیدترین کلاس ACEA برای 0W-16 با اقتصاد سوخت بهبودیافته.',
     body: [
@@ -256,6 +268,7 @@ export const SPECS: SpecPage[] = [
     title: '5W-30 یعنی چه و برای چه خودروهایی مناسب است؟',
     kind: 'sae',
     code: 'SAE 5W-30',
+    matchCodes: ['5W-30'],
     summary:
       'روغن چنددرجه‌ای با رفتار استارت سرد معادل گرید 5W و ویسکوزیتهٔ کاری معادل گرید 30؛ پراستفاده‌ترین گرید در خودروهای مدرن.',
     body: [
@@ -278,6 +291,7 @@ export const SPECS: SpecPage[] = [
     title: '10W-40 — پرمصرف‌ترین گرید بازار ایران',
     kind: 'sae',
     code: 'SAE 10W-40',
+    matchCodes: ['10W-40'],
     summary:
       'گرید نیمه‌سنتتیک رایج برای ناوگان عظیم خودروهای شهری ایران؛ تعادل قیمت و عملکرد.',
     body: [
@@ -300,6 +314,9 @@ export const SPECS: SpecPage[] = [
     title: 'HTHS و شاخص ویسکوزیته — عددی که فروشندگان هم نمی‌دانند',
     kind: 'sae',
     code: 'HTHS / VI',
+    // صفحهٔ مفهومی — هر محصولی که HTHS اندازه‌گیری‌شده دارد
+    matchCodes: [],
+    matchFilter: (p) => typeof p.techSpec?.hths === 'number',
     summary:
       'HTHS ویسکوزیتهٔ روغن در ۱۵۰ درجه و برش شدید است و مرز بین «روغن کم‌مصرف» و «روغن محافظ» را تعیین می‌کند.',
     body: [
@@ -323,6 +340,7 @@ export const SPECS: SpecPage[] = [
     title: 'JASO MA، MA2 و MB — چرا روغن خودرو موتور سیکلت را خراب می‌کند؟',
     kind: 'jaso',
     code: 'JASO MA / MA2 / MB',
+    matchCodes: ['MA2', 'MA', 'MB'],
     summary:
       'استاندارد ژاپنی برای روغن موتور سیکلت. در موتورهای کلاچ‌تر، روغن باید اصطکاک کافی داشته باشد — دقیقاً برعکس روغن خودرو.',
     body: [
@@ -346,6 +364,9 @@ export const SPECS: SpecPage[] = [
     title: 'LSPI چیست و چرا موتورهای توربو را می‌شکند؟',
     kind: 'api',
     code: 'LSPI / Sequence IX',
+    // صفحهٔ مفهومی — LSPI با API SP و پرچم turboGdiOk پوشش داده می‌شود
+    matchCodes: ['SP'],
+    matchFilter: (p) => p.turboGdiOk,
     summary:
       'پیش‌احتراقی در دور پایین که در موتورهای توربو با تزریق مستقیم رخ می‌دهد و می‌تواند پیستون و شاتون را بشکند.',
     body: [

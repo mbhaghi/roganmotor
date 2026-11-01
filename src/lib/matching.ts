@@ -1,6 +1,6 @@
 import { PRODUCTS } from './products';
 import { canRecommend } from './vehicles';
-import type { Product, Vehicle } from './types';
+import type { Product, SpecPage, Vehicle } from './types';
 
 /**
  * موتور تطبیق روغن‌یاب.
@@ -248,18 +248,106 @@ export function findOil(input: MatchInput): MatchResult {
  * مسیر دوم روغن‌یاب: جست‌وجو بر اساس کد استاندارد.
  * (ACEA C3 / API SP / VW 507 00 / 5W-30)
  */
+/**
+ * همهٔ صورت‌های ممکن یک کد تأییدیهٔ چندگانه.
+ *
+ * سازندگان کدها را با «/» گروه می‌کنند و پیشوند را فقط یک بار می‌نویسند:
+ *   'MB 229.51 / 229.52' → در واقع دو تأییدیه است: MB 229.51 و MB 229.52
+ *   'VW 504 00 / 507 00' → VW 504 00 و VW 507 00
+ * کاربر «MB 229.52» را جست‌وجو می‌کند، نه رشتهٔ کامل را؛ پس پیشوند باید
+ * به هر جزء تعمیم داده شود، وگرنه تطبیق شکست می‌خورد.
+ */
+function oemVariants(code: string): string[] {
+  const norm = code.toLowerCase().replace(/\s+/g, ' ').trim();
+  const parts = norm.split('/').map((s) => s.trim()).filter(Boolean);
+  if (parts.length <= 1) return [norm];
+
+  // پیشوند = اولین توکن رشته، یعنی نام سازنده ('MB 229.51 / 229.52' → 'mb')
+  const brand = norm.split(' ')[0];
+  const out = [norm, ...parts];
+  for (const part of parts) {
+    if (brand && !part.startsWith(brand)) out.push(`${brand} ${part}`);
+  }
+  return Array.from(new Set(out));
+}
+
 export function findBySpec(query: string): Product[] {
   const q = query.trim().toLowerCase().replace(/\s+/g, ' ');
   if (!q) return [];
+  const qNoSpace = q.replace(/\s/g, '');
+  const matchesOem = (code: string) =>
+    oemVariants(code).some((v) => v.includes(q) || v.replace(/\s/g, '') === qNoSpace);
+
   return PRODUCTS.filter((p) => {
     if (p.saeGrade.toLowerCase() === q) return true;
-    if (p.acea.some((a) => a.toLowerCase().replace(/\s/g, '') === q.replace(/\s/g, ''))) return true;
+    if (p.acea.some((a) => a.toLowerCase().replace(/\s/g, '') === qNoSpace)) return true;
     if (p.api.some((a) => a.toLowerCase() === q || `api ${a.toLowerCase()}` === q)) return true;
     if (p.ilsac.some((a) => a.toLowerCase() === q || `gf-${a.toLowerCase().replace('gf-', '')}` === q)) return true;
     if (p.jaso.some((a) => a.toLowerCase() === q)) return true;
-    if (p.oem.some((o) => o.code.toLowerCase().includes(q))) return true;
+    if (p.oem.some((o) => matchesOem(o.code))) return true;
     return false;
   });
+}
+
+export type SpecKind = 'sae' | 'api' | 'ilsac' | 'acea' | 'oem' | 'jaso';
+
+const normSpec = (s: string) => s.toLowerCase().replace(/\s+/g, ' ').trim();
+
+/**
+ * تطبیق دقیق یک کد، فقط در فضای‌نام مربوط به خودش.
+ *
+ * چرا لازم است: findBySpec آزادانه در همهٔ فیلدها می‌گردد که برای تایپ دستی
+ * کاربر درست است، اما برای صفحات مشخصات فاجعه می‌سازد — کد کوتاه JASO مثل
+ * 'MA' زیررشتهٔ 'MAN M 3775' است و 'MB' زیررشتهٔ تأییدیهٔ مرسدس 'MB 229.51'.
+ * نتیجه: صفحهٔ JASO MA2 روغن خودرو و روغن دیزل سنگین پیشنهاد می‌داد.
+ * چون kind هر صفحه معلوم است، تطبیق را به همان فیلد محدود می‌کنیم.
+ */
+export function findBySpecKind(query: string, kind: SpecKind): Product[] {
+  const q = normSpec(query);
+  if (!q) return [];
+  const qNoSpace = q.replace(/\s/g, '');
+  const eq = (v: string) => normSpec(v).replace(/\s/g, '') === qNoSpace;
+
+  switch (kind) {
+    case 'sae':
+      return PRODUCTS.filter((p) => eq(p.saeGrade));
+    case 'api':
+      return PRODUCTS.filter((p) => p.api.some(eq));
+    case 'ilsac':
+      return PRODUCTS.filter((p) => p.ilsac.some(eq));
+    case 'acea':
+      return PRODUCTS.filter((p) => p.acea.some(eq));
+    case 'jaso':
+      return PRODUCTS.filter((p) => p.jaso.some(eq));
+    case 'oem':
+      // کدهای OEM چندگانه‌اند ('MB 229.51 / 229.52')؛ باید با هر جزء تطبیق بخورند
+      return PRODUCTS.filter((p) =>
+        p.oem.some((o) =>
+          oemVariants(o.code).some((v) => normSpec(v) === q || normSpec(v).replace(/\s/g, '') === qNoSpace),
+        ),
+      );
+  }
+}
+
+/**
+ * محصولات منطبق با یک صفحهٔ مشخصات.
+ *
+ * دو منبع با هم اجتماع می‌شوند (بدون تکرار):
+ *   ۱. spec.matchCodes — کلیدهای صریح استاندارد، محدود به فضای‌نام spec.kind
+ *   ۲. spec.matchFilter — برای صفحات مفهومی (SAPS/DPF، HTHS، LSPI) که هیچ
+ *      کد استانداردی برای تطبیق ندارند و باید روی پرچم‌های فنی فیلتر شوند
+ *
+ * چرا کلیدها صریح‌اند: رشتهٔ نمایشی `code` گاهی چند کد را با «/» گروه می‌کند
+ * ('MB 229.51 / 229.52') و گاهی اصلاً کد محصول نیست ('HTHS / VI'). مشتق‌کردن
+ * کلید جست‌وجو از آن با split و replace، بی‌صدا نتیجه را صفر می‌کرد.
+ *
+ * ترتیب نتیجه همان ترتیب PRODUCTS است، پس محصولات ویژه (featured) جلوتر می‌مانند.
+ */
+export function productsForSpec(spec: SpecPage): Product[] {
+  const byCode = spec.matchCodes.flatMap((code) => findBySpecKind(code, spec.kind));
+  const byFilter = spec.matchFilter ? PRODUCTS.filter(spec.matchFilter) : [];
+  const hit = new Set([...byCode, ...byFilter].map((p) => p.slug));
+  return PRODUCTS.filter((p) => hit.has(p.slug));
 }
 
 /** محاسبهٔ تاریخ/کیلومتر تعویض بعدی — پشت سرویس «یادآور» */

@@ -113,7 +113,23 @@ export interface SpecPage {
   slug: string;
   title: string;
   kind: 'sae' | 'api' | 'ilsac' | 'acea' | 'oem' | 'jaso';
+  /** رشتهٔ نمایشی برای کاربر — ممکن است چند کد را با «/» گروه کند */
   code: string;
+  /**
+   * کلیدهای تطبیق محصول — صریح و مستقل از `code`.
+   *
+   * چرا این فیلد لازم است: `code` برای نمایش است و گاهی چند کد را گروه می‌کند
+   * ('MB 229.51 / 229.52') یا مفهومی است نه کد محصول ('HTHS / VI'). مشتق‌کردن
+   * کلید جست‌وجو از آن با split و replace شکننده است و بی‌صدا محصول را صفر می‌کند.
+   * هر مقدار اینجا مستقیماً به findBySpec داده می‌شود و نتایج اجتماع می‌شوند.
+   */
+  matchCodes: string[];
+  /**
+   * صفحات مفهومی (SAPS/DPF، HTHS، LSPI) کد استانداردی ندارند که با findBySpec
+   * تطبیق بخورد؛ آن‌ها روی پرچم‌های فنی محصول فیلتر می‌شوند.
+   * نتیجه با نتایج matchCodes اجتماع می‌شود (بدون تکرار).
+   */
+  matchFilter?: (p: Product) => boolean;
   summary: string;
   body: string[];
   keyPoints: string[];

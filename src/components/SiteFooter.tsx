@@ -36,7 +36,7 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-2 text-sm">
             {CATEGORIES.map((c) => (
               <li key={c.slug}>
-                <Link href={`/mahsolat?cat=${c.slug}`} className="hover:text-gold-300">
+                <Link href={`/daste/${c.slug}`} className="hover:text-gold-300">
                   {c.name}
                 </Link>
               </li>

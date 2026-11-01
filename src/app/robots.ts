@@ -8,7 +8,7 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: '*',
         allow: '/',
         // صفحات دارای پارامتر فیلتر نباید ایندکس شوند (canonical به نسخهٔ بدون فیلتر است)
-        disallow: ['/mahsolat?*', '/hoghughi/'],
+        disallow: ['/hoghughi/'],
       },
     ],
     sitemap: `${SITE.url}/sitemap.xml`,

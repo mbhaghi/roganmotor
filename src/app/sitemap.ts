@@ -29,12 +29,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE.url}/hoghughi/harim-khosoosi`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
   ];
 
-  const categoryPages: MetadataRoute.Sitemap = CATEGORIES.map((c) => ({
-    url: `${SITE.url}/mahsolat?cat=${c.slug}`,
-    lastModified: now,
-    changeFrequency: 'weekly',
-    priority: 0.7,
-  }));
+  // صفحهٔ فرود هر دسته — مسیر استاتیک واقعی، نه query string (قابل ایندکس)
+  const categoryPages: MetadataRoute.Sitemap = CATEGORIES
+    .filter((c) => PRODUCTS.some((p) => p.category === c.slug))
+    .map((c) => ({
+      url: `${SITE.url}/daste/${c.slug}`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    }));
 
   const productPages: MetadataRoute.Sitemap = PRODUCTS.map((p) => ({
     url: `${SITE.url}/mahsolat/${p.slug}`,

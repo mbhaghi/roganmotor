@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { SPECS, getSpec } from '@/lib/specs';
-import { findBySpec } from '@/lib/matching';
+import { productsForSpec } from '@/lib/matching';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { ProductCard } from '@/components/ProductCard';
 import { JsonLd, articleJsonLd } from '@/components/JsonLd';
@@ -27,9 +27,10 @@ export default async function SpecPage({ params }: { params: Promise<{ slug: str
   const spec = getSpec(slug);
   if (!spec) notFound();
 
-  // محصولات منطبق با این کد — اتصال مستقیم محتوا به فروشگاه
-  const codeForSearch = spec.code.split('/')[0].trim().replace(/^ACEA |^API |^ILSAC |^JASO /, '');
-  const products = findBySpec(codeForSearch).slice(0, 4);
+  // محصولات منطبق — اتصال مستقیم محتوا به فروشگاه.
+  // کلیدهای تطبیق در دادهٔ خودِ رکورد تعریف شده‌اند (spec.matchCodes / matchFilter)،
+  // نه با مشتق‌سازی از رشتهٔ نمایشی `code`.
+  const products = productsForSpec(spec).slice(0, 4);
   const related = (spec.relatedSlugs ?? [])
     .map((s) => SPECS.find((x) => x.slug === s))
     .filter((s): s is NonNullable<typeof s> => !!s);
