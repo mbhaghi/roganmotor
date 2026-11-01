@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { categoryImg } from '@/lib/images';
 import { SITE } from '@/lib/config';
 import { getProductsByCategory, fromPrice } from '@/lib/products';
 import { CATEGORY_LANDINGS, activeCategories } from '@/lib/categories';
@@ -63,16 +65,22 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         ]}
       />
 
-      <header className="mt-2">
-        <div className="flex flex-wrap items-baseline gap-3">
-          <span className="text-3xl" aria-hidden>{c.icon}</span>
-          <h1 className="section-title !mb-0">{c.name}</h1>
+      <header className="relative mt-4 overflow-hidden rounded-2xl ring-1 ring-slate-200">
+        <div className="relative aspect-[21/8] min-h-[190px] w-full overflow-hidden sm:aspect-[21/6]">
+          <Image src={categoryImg(slug)} alt={c.name} fill priority sizes="100vw" className="object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-l from-brand-950/92 via-brand-950/60 to-brand-950/20" />
+          <div className="absolute inset-0 flex flex-col justify-center p-6 sm:p-8">
+            <div className="flex flex-wrap items-baseline gap-3">
+              <span className="text-3xl drop-shadow" aria-hidden>{c.icon}</span>
+              <h1 className="section-title !mb-0 text-white drop-shadow">{c.name}</h1>
+            </div>
+            <p className="mt-2 max-w-2xl text-sm leading-7 text-slate-200">{c.blurb}</p>
+            <p className="mt-3 text-sm text-gold-200">
+              <span className="num font-bold">{faNumber(products.length)}</span> محصول · از{' '}
+              <span className="num font-bold" dir="ltr">{faPrice(cheapest)}</span>
+            </p>
+          </div>
         </div>
-        <p className="section-sub mt-2">{c.blurb}</p>
-        <p className="mt-3 text-sm text-ink-soft">
-          <span className="num font-bold text-brand-700">{faNumber(products.length)}</span> محصول · از{' '}
-          <span className="num font-bold text-brand-700" dir="ltr">{faPrice(cheapest)}</span>
-        </p>
       </header>
 
       {/* ناوبری بین دسته‌ها */}

@@ -50,8 +50,27 @@ export function SiteHeader() {
         </button>
 
         <Link href="/" className="flex shrink-0 items-center gap-2">
-          <span className="grid h-10 w-10 place-items-center rounded-lg bg-brand-800 text-lg text-gold-300">
-            🛢️
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-brand-800 to-brand-950 ring-1 ring-gold-400/40">
+            <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" aria-hidden>
+              <path
+                d="M12 2.5c3.6 4.6 6.5 8.2 6.5 12a6.5 6.5 0 1 1-13 0c0-3.8 2.9-7.4 6.5-12Z"
+                fill="url(#brandDrop)"
+              />
+              <path
+                d="M9.2 13.8a3 3 0 0 0 2.2 4.5"
+                stroke="#0d2438"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                opacity=".5"
+              />
+              <defs>
+                <linearGradient id="brandDrop" x1="6" y1="4" x2="18" y2="20" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#f2dea1" />
+                  <stop offset=".55" stopColor="#e3b03d" />
+                  <stop offset="1" stopColor="#c07a1c" />
+                </linearGradient>
+              </defs>
+            </svg>
           </span>
           <span className="leading-tight">
             <span className="block text-base font-extrabold text-ink sm:text-lg">{SITE.brandName}</span>

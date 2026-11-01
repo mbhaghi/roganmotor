@@ -1,4 +1,6 @@
+import Image from 'next/image';
 import Link from 'next/link';
+import { IMG } from '@/lib/images';
 import { TrustModule } from '@/components/TrustModule';
 import { AuthenticityForm } from '@/components/AuthenticityForm';
 import { Breadcrumb } from '@/components/Breadcrumb';
@@ -101,16 +103,20 @@ export default function AuthenticityPage() {
       <div className="container-site py-8">
         <Breadcrumb items={[{ name: 'اصالت کالا', href: '/asalat' }]} />
 
-        <header className="max-w-3xl">
-          <span className="badge-gold">🛡️ مزیت اصلی ما</span>
-          <h1 className="mt-3 text-3xl font-extrabold leading-tight text-ink sm:text-4xl">
-            اصالت روغن موتور را چطور ثابت می‌کنیم؟
-          </h1>
-          <p className="section-sub">
-            در بازار روغن موتور، بزرگ‌ترین مانع خرید آنلاین قیمت نیست؛ ترس از تقلبی بودن است. روغن
-            تصفیه‌شدهٔ دوباره در قوطی برند معتبر، بسته‌بندی‌های مشابه و کانال‌های توزیع غیررسمی واقعاً
-            رایج‌اند. ما به‌جای شعار دادن، سه لایهٔ قابل‌راستی‌آزمایی ساخته‌ایم.
-          </p>
+        <header className="relative mt-4 overflow-hidden rounded-2xl">
+          <Image src={IMG.lab} alt="" fill priority sizes="100vw" className="object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-l from-brand-950/95 via-brand-950/82 to-brand-950/45" />
+          <div className="relative max-w-3xl p-8 sm:p-10">
+            <span className="badge-gold">🛡️ مزیت اصلی ما</span>
+            <h1 className="mt-3 text-3xl font-extrabold leading-tight text-white drop-shadow sm:text-4xl">
+              اصالت روغن موتور را چطور ثابت می‌کنیم؟
+            </h1>
+            <p className="mt-3 text-sm leading-8 text-slate-200">
+              در بازار روغن موتور، بزرگ‌ترین مانع خرید آنلاین قیمت نیست؛ ترس از تقلبی بودن است. روغن
+              تصفیه‌شدهٔ دوباره در قوطی برند معتبر، بسته‌بندی‌های مشابه و کانال‌های توزیع غیررسمی واقعاً
+              رایج‌اند. ما به‌جای شعار دادن، سه لایهٔ قابل‌راستی‌آزمایی ساخته‌ایم.
+            </p>
+          </div>
         </header>
 
         {/* سه لایهٔ اثبات اصالت */}

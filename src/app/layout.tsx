@@ -10,6 +10,7 @@ import { SITE } from '@/lib/config';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { CartProvider } from '@/components/cart/CartProvider';
+import { ScrollProgress } from '@/components/motion';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="fa" dir="rtl">
       <body className="font-sans">
         <CartProvider>
+          <ScrollProgress />
           <a
             href="#main"
             className="sr-only focus:not-sr-only focus:absolute focus:right-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-brand-700 focus:px-4 focus:py-2 focus:text-white"

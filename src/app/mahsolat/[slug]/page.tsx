@@ -1,5 +1,7 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { categoryImg } from '@/lib/images';
 import { PRODUCTS, getProduct, serviceBundleFor } from '@/lib/products';
 import { VEHICLES } from '@/lib/vehicles';
 import { SITE, CATEGORIES } from '@/lib/config';
@@ -76,16 +78,30 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         {/* ── هدر محصول ───────────────────────────────────────── */}
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
           <div>
-            <div className="card grid aspect-square place-items-center bg-gradient-to-br from-brand-50 to-slate-100 p-8">
-              <div className="text-center">
-                <span className="text-7xl" aria-hidden>
-                  {category?.icon ?? '🛢️'}
-                </span>
-                <p className="num mt-4 text-3xl font-extrabold text-brand-800" dir="ltr">
-                  {product.saeGrade}
-                </p>
-                <p className="mt-1 text-xs text-ink-mute">{BASE_TYPE_FA[product.baseType]}</p>
+            <div className="relative aspect-square overflow-hidden rounded-2xl ring-1 ring-slate-200">
+              <Image
+                src={categoryImg(product.category)}
+                alt=""
+                fill
+                priority
+                sizes="(max-width:1024px) 100vw, 45vw"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-950/92 via-brand-950/45 to-brand-950/15" />
+              <div className="absolute inset-0 grid place-items-center p-8 text-center">
+                <div>
+                  <span className="text-7xl drop-shadow-lg" aria-hidden>
+                    {category?.icon ?? '🛢️'}
+                  </span>
+                  <p className="num mt-4 text-4xl font-extrabold text-white drop-shadow" dir="ltr">
+                    {product.saeGrade}
+                  </p>
+                  <p className="mt-1 text-xs text-gold-200">{BASE_TYPE_FA[product.baseType]}</p>
+                </div>
               </div>
+              <span className="absolute bottom-3 left-3 rounded-full bg-brand-950/60 px-2.5 py-1 text-[10px] text-slate-300 backdrop-blur">
+                تصویر نمونهٔ دسته — جای عکس واقعی محصول
+              </span>
             </div>
 
             {/* نشان‌های اعتماد */}

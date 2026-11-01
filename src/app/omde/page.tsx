@@ -1,4 +1,6 @@
+import Image from 'next/image';
 import Link from 'next/link';
+import { IMG } from '@/lib/images';
 import { PRODUCTS } from '@/lib/products';
 import { Breadcrumb } from '@/components/Breadcrumb';
 import { RfqForm } from '@/components/RfqForm';
@@ -60,16 +62,20 @@ export default function WholesalePage() {
     <div className="container-site py-8">
       <Breadcrumb items={[{ name: 'خرید عمده', href: '/omde' }]} />
 
-      <header className="max-w-3xl">
-        <span className="badge-gold">🏭 بخش B2B</span>
-        <h1 className="mt-3 text-3xl font-extrabold leading-tight text-ink sm:text-4xl">
-          خرید عمده برای تعمیرگاه، ناوگان و صنعت
-        </h1>
-        <p className="section-sub">
-          حجم اصلی بازار روانکار در B2B است، اما نیازهای B2B با خرده‌فروشی کاملاً متفاوت است: فاکتور
-          رسمی، ثبات قیمت، تأمین مستمر، بسته‌بندی بشکه‌ای و یک فرد پاسخ‌گو. ما این دو بخش را در سایت
-          کاملاً از هم جدا کرده‌ایم تا هیچ‌کدام قربانی دیگری نشود.
-        </p>
+      <header className="relative mt-4 overflow-hidden rounded-2xl">
+        <Image src={IMG.workshop} alt="" fill priority sizes="100vw" className="object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-l from-brand-950/95 via-brand-950/82 to-brand-950/45" />
+        <div className="relative max-w-3xl p-8 sm:p-10">
+          <span className="badge-gold">🏭 بخش B2B</span>
+          <h1 className="mt-3 text-3xl font-extrabold leading-tight text-white drop-shadow sm:text-4xl">
+            خرید عمده برای تعمیرگاه، ناوگان و صنعت
+          </h1>
+          <p className="mt-3 text-sm leading-8 text-slate-200">
+            حجم اصلی بازار روانکار در B2B است، اما نیازهای B2B با خرده‌فروشی کاملاً متفاوت است: فاکتور
+            رسمی، ثبات قیمت، تأمین مستمر، بسته‌بندی بشکه‌ای و یک فرد پاسخ‌گو. ما این دو بخش را در سایت
+            کاملاً از هم جدا کرده‌ایم تا هیچ‌کدام قربانی دیگری نشود.
+          </p>
+        </div>
       </header>
 
       {/* پله‌های قیمتی */}
