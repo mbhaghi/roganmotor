@@ -136,7 +136,7 @@ export default function ProductsPage() {
         </p>
       </section>
 
-      <div className="mt-10 rounded-xl border border-slate-200 bg-slate-50 p-6 text-center">
+      <div className="mt-10 rounded-xl border border-slate-200 bg-mist p-6 text-center">
         <h2 className="text-base font-extrabold text-ink">نمی‌دانید کدام ردیف جدول برای شماست؟</h2>
         <p className="mt-2 text-sm text-ink-soft">
           ابزار روغن‌یاب بر اساس خودروی شما تصمیم می‌گیرد و حجم دقیق را هم محاسبه می‌کند.

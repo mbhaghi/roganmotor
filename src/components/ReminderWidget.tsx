@@ -53,7 +53,7 @@ export function ReminderWidget() {
         </div>
 
         <form
-          className="space-y-4 rounded-xl border border-slate-200 bg-slate-50 p-5"
+          className="space-y-4 rounded-xl border border-slate-200 bg-mist p-5"
           onSubmit={(e) => {
             e.preventDefault();
             setSubscribed(true);

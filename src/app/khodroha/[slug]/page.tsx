@@ -365,7 +365,7 @@ function QuickFact({
   mono?: boolean;
 }) {
   return (
-    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+    <div className="rounded-lg border border-slate-200 bg-mist p-4">
       <dt className="text-[11px] text-ink-mute">{label}</dt>
       <dd
         className={`mt-1 text-base font-extrabold text-brand-900 ${mono ? 'num' : ''}`}

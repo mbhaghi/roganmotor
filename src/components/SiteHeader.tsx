@@ -65,9 +65,9 @@ export function SiteHeader() {
               />
               <defs>
                 <linearGradient id="brandDrop" x1="6" y1="4" x2="18" y2="20" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#f2dea1" />
-                  <stop offset=".55" stopColor="#e3b03d" />
-                  <stop offset="1" stopColor="#c07a1c" />
+                  <stop stopColor="#b4d2c7" />
+                  <stop offset=".55" stopColor="#52917d" />
+                  <stop offset="1" stopColor="#064B3B" />
                 </linearGradient>
               </defs>
             </svg>
@@ -88,7 +88,7 @@ export function SiteHeader() {
                 key={n.href}
                 href={n.href}
                 className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                  active ? 'bg-brand-50 text-brand-800' : 'text-ink-soft hover:bg-slate-100 hover:text-brand-700'
+                  active ? 'bg-brand-50 text-brand-800' : 'text-ink-soft hover:bg-mist hover:text-brand-700'
                 }`}
               >
                 {n.label}
@@ -120,7 +120,7 @@ export function SiteHeader() {
                 key={n.href}
                 href={n.href}
                 onClick={() => setMenuOpen(false)}
-                className="rounded-lg px-3 py-2.5 text-sm font-medium text-ink-soft hover:bg-slate-100"
+                className="rounded-lg px-3 py-2.5 text-sm font-medium text-ink-soft hover:bg-mist"
               >
                 {n.label}
               </Link>

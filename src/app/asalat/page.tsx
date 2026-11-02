@@ -214,7 +214,7 @@ export default function AuthenticityPage() {
             {CHECKLIST.map((c, i) => (
               <article key={c.title} className="card p-5">
                 <div className="flex items-start gap-3">
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-slate-100 text-lg">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-mist text-lg">
                     {c.icon}
                   </span>
                   <div>

@@ -10,7 +10,7 @@ import { TrustModule } from '@/components/TrustModule';
 import { ProductCard } from '@/components/ProductCard';
 import { JsonLd } from '@/components/JsonLd';
 import { Reveal, Parallax, Counter, Marquee } from '@/components/motion';
-import { IMG, categoryImg } from '@/lib/images';
+import { IMG, categoryImg, productImg } from '@/lib/images';
 
 export const metadata = {
   title: 'فروشگاه تخصصی روغن موتور — اصل، با بچ‌نامبر قابل استعلام',
@@ -242,8 +242,14 @@ export default function HomePage() {
 
         <div className="container-site grid items-center gap-12 lg:grid-cols-2">
           <Reveal variant="right">
-            <div className="relative mx-auto aspect-square max-w-md overflow-hidden rounded-3xl shadow-2xl">
-              <Image src={IMG.flagship} alt={`بطری ${flagship?.name ?? 'روغن موتور'}`} fill sizes="(max-width:1024px) 90vw, 45vw" className="object-cover" />
+            <div className="relative mx-auto aspect-square max-w-md overflow-hidden rounded-3xl bg-white shadow-2xl ring-1 ring-slate-200">
+              <Image
+                src={productImg(flagship?.slug ?? '') ?? IMG.flagship}
+                alt={`بطری ${flagship?.name ?? 'روغن موتور'}`}
+                fill
+                sizes="(max-width:1024px) 90vw, 45vw"
+                className="object-contain p-8"
+              />
             </div>
           </Reveal>
 
@@ -290,7 +296,7 @@ export default function HomePage() {
       </section>
 
       {/* ══ مسیر اعتماد: سه گام با تصویر ══ */}
-      <section className="border-y border-slate-200 bg-slate-50 py-16">
+      <section className="border-y border-slate-200 bg-mist py-16">
         <div className="container-site">
           <Reveal>
             <h2 className="section-title rule-gold-animated text-center">اعتماد ساخته می‌شود، ادعا نمی‌شود</h2>
@@ -446,7 +452,7 @@ export default function HomePage() {
         </div>
 
         <Reveal delay={150}>
-          <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5">
+          <div className="mt-8 rounded-2xl border border-slate-200 bg-mist p-5">
             <h3 className="text-sm font-bold text-ink">راهنمای استانداردها</h3>
             <div className="mt-3 flex flex-wrap gap-2">
               {SPECS.slice(0, 10).map((s) => (
@@ -562,7 +568,7 @@ function HeroStat({ children }: { children: React.ReactNode }) {
 
 function TechStat({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 text-center">
+    <div className="rounded-xl border border-slate-200 bg-mist p-3 text-center">
       <dd className="num text-lg font-extrabold text-brand-800" dir="ltr">{children}</dd>
       <dt className="mt-1 text-[11px] leading-5 text-ink-mute">{label}</dt>
     </div>

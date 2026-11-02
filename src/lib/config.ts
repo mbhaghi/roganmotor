@@ -10,10 +10,10 @@
 export type BrandRole = 'owner' | 'official_dealer' | 'focused_retailer';
 
 export const SITE = {
-  /** نام تجاری نمایشی — با نام برند واقعی جایگزین شود */
-  brandName: 'پارس‌روان',
-  brandNameLatin: 'ParsRavan',
-  legalName: 'شرکت نمونهٔ پارس‌روان (سهامی خاص)',
+  /** نام تجاری — از روی عکس‌های واقعی محصول (products.zip) استخراج شد */
+  brandName: 'پارانوکس',
+  brandNameLatin: 'Paranox',
+  legalName: 'شرکت پارانوکس (سهامی خاص)',
   /** دامنهٔ رسمی برای sitemap و canonical */
   url: 'https://roganmotor.example.ir',
   /** نقش کسب‌وکار نسبت به برند — سناریوی پیش‌فرض فعلی */

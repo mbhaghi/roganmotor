@@ -51,7 +51,7 @@ export default function AboutPage() {
                 'یک رابطهٔ بلندمدت با یک تأمین‌کننده، ثبات بهتری نسبت به خرید پراکنده از چند منبع می‌دهد.',
               ],
             ].map(([title, body]) => (
-              <li key={title} className="rounded-lg bg-slate-50 p-4">
+              <li key={title} className="rounded-lg bg-mist p-4">
                 <h3 className="text-sm font-bold text-ink">{title}</h3>
                 <p className="mt-1.5 text-xs leading-6 text-ink-soft">{body}</p>
               </li>
@@ -132,7 +132,7 @@ export default function AboutPage() {
             ['ساعات کاری', SITE.workingHours],
             ['مجوزها', 'اینماد · کد مالیاتی · پروانهٔ کسب اتحادیهٔ کسب‌وکارهای مجازی'],
           ].map(([k, v]) => (
-            <div key={k} className="rounded-lg bg-slate-50 p-3">
+            <div key={k} className="rounded-lg bg-mist p-3">
               <dt className="text-[11px] text-ink-mute">{k}</dt>
               <dd className="num mt-1 text-sm font-semibold text-ink" dir="ltr">
                 {v}

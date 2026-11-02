@@ -33,7 +33,7 @@ export default function ScenariosPage() {
           نسبت به برند، لحن کل سایت، مدارکی که می‌توانیم منتشر کنیم، سیاست قیمت‌گذاری و حتی استراتژی سئو
           را تعیین می‌کند.
         </p>
-        <p className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs leading-6 text-ink-soft">
+        <p className="mt-4 rounded-lg border border-slate-200 bg-mist p-3 text-xs leading-6 text-ink-soft">
           سناریوی فعال در این پروتوتایپ:{' '}
           <strong className="text-brand-800">{ROLE_PROFILES[SITE.brandRole].label}</strong>. با تغییر{' '}
           <code className="num rounded bg-white px-1" dir="ltr">
@@ -141,7 +141,7 @@ export default function ScenariosPage() {
               <div className="mb-3 flex flex-wrap items-center gap-3">
                 <h3 className="text-base font-extrabold text-ink">{ROLE_PROFILES[role].label}</h3>
                 {role === SITE.brandRole && <span className="badge-ok">سناریوی فعال فعلی</span>}
-                <code className="num rounded bg-slate-100 px-2 py-1 text-[11px] text-ink-soft" dir="ltr">
+                <code className="num rounded bg-mist px-2 py-1 text-[11px] text-ink-soft" dir="ltr">
                   brandRole = &apos;{role}&apos;
                 </code>
               </div>

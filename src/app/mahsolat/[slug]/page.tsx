@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { categoryImg } from '@/lib/images';
+import { categoryImg, productImg } from '@/lib/images';
 import { PRODUCTS, getProduct, serviceBundleFor } from '@/lib/products';
 import { VEHICLES } from '@/lib/vehicles';
 import { SITE, CATEGORIES } from '@/lib/config';
@@ -78,30 +78,48 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         {/* ── هدر محصول ───────────────────────────────────────── */}
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
           <div>
-            <div className="relative aspect-square overflow-hidden rounded-2xl ring-1 ring-slate-200">
-              <Image
-                src={categoryImg(product.category)}
-                alt=""
-                fill
-                priority
-                sizes="(max-width:1024px) 100vw, 45vw"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-950/92 via-brand-950/45 to-brand-950/15" />
-              <div className="absolute inset-0 grid place-items-center p-8 text-center">
-                <div>
-                  <span className="text-7xl drop-shadow-lg" aria-hidden>
-                    {category?.icon ?? '🛢️'}
+            <div className="relative aspect-square overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200">
+              {productImg(product.slug) ? (
+                <>
+                  <Image
+                    src={productImg(product.slug)!}
+                    alt={`بسته‌بندی ${product.name}`}
+                    fill
+                    priority
+                    sizes="(max-width:1024px) 100vw, 45vw"
+                    className="object-contain p-6"
+                  />
+                  <span className="absolute bottom-3 left-3 rounded-full bg-brand-50 px-2.5 py-1 text-[10px] font-semibold text-brand-800">
+                    نمای واقعی بسته
                   </span>
-                  <p className="num mt-4 text-4xl font-extrabold text-white drop-shadow" dir="ltr">
-                    {product.saeGrade}
-                  </p>
-                  <p className="mt-1 text-xs text-gold-200">{BASE_TYPE_FA[product.baseType]}</p>
-                </div>
-              </div>
-              <span className="absolute bottom-3 left-3 rounded-full bg-brand-950/60 px-2.5 py-1 text-[10px] text-slate-300 backdrop-blur">
-                تصویر نمونهٔ دسته — جای عکس واقعی محصول
-              </span>
+                </>
+              ) : (
+                <>
+                  <Image
+                    src={categoryImg(product.category)}
+                    alt=""
+                    fill
+                    priority
+                    sizes="(max-width:1024px) 100vw, 45vw"
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-brand-950/92 via-brand-950/45 to-brand-950/15" />
+                  <div className="absolute inset-0 grid place-items-center p-8 text-center">
+                    <div>
+                      <span className="text-7xl drop-shadow-lg" aria-hidden>
+                        {category?.icon ?? '🛢️'}
+                      </span>
+                      <p className="num mt-4 text-4xl font-extrabold text-white drop-shadow" dir="ltr">
+                        {product.saeGrade}
+                      </p>
+                      <p className="mt-1 text-xs text-gold-200">{BASE_TYPE_FA[product.baseType]}</p>
+                    </div>
+                  </div>
+                  <span className="absolute bottom-3 left-3 rounded-full bg-brand-950/60 px-2.5 py-1 text-[10px] text-slate-300 backdrop-blur">
+                    تصویر نمونهٔ دسته — جای عکس واقعی محصول
+                  </span>
+                </>
+              )}
             </div>
 
             {/* نشان‌های اعتماد */}
@@ -404,7 +422,7 @@ function Compat({ ok, label }: { ok: boolean; label: string }) {
   return (
     <div
       className={`rounded-lg border p-2 text-center ${
-        ok ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-slate-50'
+        ok ? 'border-emerald-200 bg-emerald-50' : 'border-slate-200 bg-mist'
       }`}
     >
       <p className={`text-sm font-bold ${ok ? 'text-emerald-700' : 'text-ink-mute'}`}>{ok ? '✓' : '✗'}</p>

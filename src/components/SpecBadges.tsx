@@ -72,7 +72,7 @@ export function ApprovalList({ product }: { product: Product }) {
             </div>
             <ul className="mt-2 flex flex-wrap gap-1.5">
               {items.map((o) => (
-                <li key={o.code} className="badge border border-slate-300 bg-slate-50 text-ink-soft">
+                <li key={o.code} className="badge border border-slate-300 bg-mist text-ink-soft">
                   <span className="num" dir="ltr">
                     {o.code}
                   </span>

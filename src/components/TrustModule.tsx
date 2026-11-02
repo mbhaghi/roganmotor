@@ -53,7 +53,7 @@ export function TrustModule({ role, compact = false }: { role?: BrandRole; compa
           <h3 className="text-sm font-bold text-ink">مدارکی که منتشر می‌کنیم</h3>
           <ul className="mt-4 space-y-3">
             {profile.proofItems.map((item) => (
-              <li key={item} className="flex items-start gap-3 rounded-lg bg-slate-50 p-3">
+              <li key={item} className="flex items-start gap-3 rounded-lg bg-mist p-3">
                 <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-emerald-100 text-xs text-emerald-700">
                   ✓
                 </span>

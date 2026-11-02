@@ -176,7 +176,7 @@ export default async function SpecPage({ params }: { params: Promise<{ slug: str
               </div>
             )}
 
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
+            <div className="rounded-xl border border-slate-200 bg-mist p-5">
               <h2 className="text-sm font-extrabold text-ink">سؤالی دارید؟</h2>
               <p className="mt-2 text-xs leading-6 text-ink-soft">
                 کارشناس فنی ما به سؤالات مشخصاتی پاسخ می‌دهد — حتی اگر منجر به خرید نشود.

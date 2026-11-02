@@ -48,7 +48,7 @@ export function VolumePicker({ product }: { product: Product }) {
                 active
                   ? 'border-brand-600 bg-brand-50'
                   : out
-                    ? 'cursor-not-allowed border-slate-200 bg-slate-50 opacity-60'
+                    ? 'cursor-not-allowed border-slate-200 bg-mist opacity-60'
                     : 'border-slate-200 bg-white hover:border-brand-300'
               }`}
             >
@@ -111,7 +111,7 @@ export function VolumePicker({ product }: { product: Product }) {
 
       {/* قیمت عمده — پل بین B2C و B2B */}
       {product.wholesaleTiers.length > 0 && (
-        <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4">
+        <div className="mt-4 rounded-lg border border-slate-200 bg-mist p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className="text-xs font-bold text-ink">💼 قیمت عمده (برای تعمیرگاه و ناوگان)</h3>
             <Link href="/omde" className="text-xs font-semibold text-brand-700 hover:underline">

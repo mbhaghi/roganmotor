@@ -13,7 +13,7 @@
   }
 
   body {
-    @apply bg-slate-50 text-ink antialiased;
+    @apply bg-white text-ink antialiased;
     font-feature-settings: 'ss01';
   }
 
@@ -61,7 +61,7 @@
   }
 
   .btn-ghost {
-    @apply btn text-ink-soft hover:bg-slate-100 hover:text-brand-700;
+    @apply btn text-ink-soft hover:bg-mist hover:text-brand-700;
   }
 
   .badge {
@@ -131,7 +131,7 @@
   }
 
   .table-clean tr:hover td {
-    @apply bg-slate-50;
+    @apply bg-mist;
   }
 }
 
@@ -176,8 +176,8 @@
   height: 3px;
   z-index: 60;
   transform-origin: right; /* در RTL از راست پر شود */
-  background: linear-gradient(90deg, var(--gp-1, #e3b03d), #d99a24 40%, #f2dea1);
-  box-shadow: 0 0 12px rgba(227, 176, 61, 0.55);
+  background: linear-gradient(90deg, var(--gp-1, #2e7462), #064B3B 40%, #86b4a4);
+  box-shadow: 0 0 12px rgba(6, 75, 59, 0.55);
   pointer-events: none;
 }
 
@@ -199,9 +199,9 @@
   white-space: nowrap;
   padding: 0.45rem 1.1rem;
   border-radius: 999px;
-  border: 1px solid rgba(227, 176, 61, 0.35);
+  border: 1px solid rgba(6, 75, 59, 0.35);
   background: rgba(255, 255, 255, 0.04);
-  color: #f2dea1;
+  color: #86b4a4;
   font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -231,7 +231,7 @@
 .group:hover .img-zoom { transform: scale(1.07); }
 
 .text-gradient-gold {
-  background: linear-gradient(100deg, #f2dea1 0%, #e3b03d 45%, #d99a24 70%, #f2dea1 100%);
+  background: linear-gradient(100deg, #86b4a4 0%, #2e7462 45%, #064B3B 70%, #86b4a4 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -257,7 +257,7 @@
   height: 3px;
   width: 3.5rem;
   border-radius: 999px;
-  background: linear-gradient(90deg, #e3b03d, #f2dea1);
+  background: linear-gradient(90deg, #2e7462, #86b4a4);
   transform: scaleX(0);
   transform-origin: right;
   transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.15s;
@@ -269,7 +269,7 @@
 .card-glow {
   box-shadow:
     0 1px 2px rgba(7, 24, 38, 0.4),
-    0 18px 50px -18px rgba(217, 154, 36, 0.35);
+    0 18px 50px -18px rgba(6, 75, 59, 0.35);
 }
 
 /* نشان اسکرول (فلش پایین hero) */
@@ -324,7 +324,7 @@
 .type-tile:hover .type-img,
 .type-tile:focus-visible .type-img { transform: scale(1.06); }
 .type-tile[aria-pressed='true'] {
-  outline: 3px solid #e3b03d;
+  outline: 3px solid #2e7462;
   outline-offset: 2px;
 }
 

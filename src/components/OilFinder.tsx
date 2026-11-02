@@ -66,7 +66,7 @@ export function OilFinder() {
               aria-selected={path === id}
               onClick={() => setPath(id)}
               className={`tap rounded-lg text-xs font-bold transition-colors sm:text-sm ${
-                path === id ? 'bg-gold-500 text-brand-950' : 'text-slate-200 hover:bg-white/10'
+                path === id ? 'bg-white text-brand-900' : 'text-slate-200 hover:bg-white/10'
               }`}
             >
               {label}
@@ -284,7 +284,7 @@ function VehicleWizard() {
                   onClick={() => setClimate(id)}
                   aria-pressed={climate === id}
                   className={`tap rounded-lg text-xs font-bold transition-colors ${
-                    climate === id ? 'bg-brand-700 text-white' : 'text-ink-soft hover:bg-slate-100'
+                    climate === id ? 'bg-brand-700 text-white' : 'text-ink-soft hover:bg-mist'
                   }`}
                 >
                   {label}
@@ -307,14 +307,14 @@ function VehicleWizard() {
                   onClick={() => setDuty(id)}
                   aria-pressed={duty === id}
                   className={`tap rounded-lg text-xs font-bold transition-colors ${
-                    duty === id ? 'bg-brand-700 text-white' : 'text-ink-soft hover:bg-slate-100'
+                    duty === id ? 'bg-brand-700 text-white' : 'text-ink-soft hover:bg-mist'
                   }`}
                 >
                   {label}
                 </button>
               ))}
             </div>
-            <details className="mt-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
+            <details className="mt-2 rounded-lg border border-slate-200 bg-mist p-3">
               <summary className="cursor-pointer text-xs font-semibold text-ink-soft">
                 چه شرایطی «شرایط سخت» است؟
               </summary>
@@ -453,7 +453,7 @@ function ManualPath() {
         تضمین‌شده می‌دهد.
       </p>
 
-      <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+      <div className="rounded-lg border border-slate-200 bg-mist p-4">
         <h3 className="text-sm font-bold text-ink">در دفترچه دنبال چه بگردیم؟</h3>
         <ul className="mt-3 grid gap-2 text-xs leading-6 text-ink-soft sm:grid-cols-2">
           <li>✓ <strong>ویسکوزیتهٔ مجاز</strong> — مثل <span className="num" dir="ltr">5W-30</span></li>
@@ -627,7 +627,7 @@ function ResultPanel({
         </div>
       )}
 
-      <p className="rounded-lg bg-slate-100 p-3 text-[11px] leading-6 text-ink-soft">
+      <p className="rounded-lg bg-mist p-3 text-[11px] leading-6 text-ink-soft">
         <strong>سلب مسئولیت:</strong> مبنای نهایی، دفترچهٔ راهنمای خودروی شماست. این پیشنهاد بر اساس داده‌های
         ثبت‌شده در پایگاه ما تولید شده و در نسخهٔ نمایشی هنوز از منبع رسمی تأیید نشده‌اند.
       </p>

@@ -1,6 +1,8 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import type { Product } from '@/lib/types';
 import { fromPrice } from '@/lib/products';
+import { productImg } from '@/lib/images';
 import { SpecBadges } from './SpecBadges';
 import { faPrice, faDecimal } from '@/lib/format';
 
@@ -16,14 +18,27 @@ const CATEGORY_ICON: Record<string, string> = {
 export function ProductCard({ product, note }: { product: Product; note?: string }) {
   const minVolume = Math.min(...product.volumes.map((v) => v.liters));
   const minPrice = fromPrice(product);
+  const img = productImg(product.slug);
 
   return (
     <article className="card group flex h-full flex-col overflow-hidden transition-shadow hover:shadow-lg">
       <Link href={`/mahsolat/${product.slug}`} className="flex flex-1 flex-col">
-        <div className="relative grid h-36 place-items-center bg-gradient-to-br from-brand-50 to-slate-100">
-          <span className="text-5xl opacity-70 transition-transform group-hover:scale-110">
-            {CATEGORY_ICON[product.category] ?? '🛢️'}
-          </span>
+        <div className="relative h-44 overflow-hidden bg-white">
+          {img ? (
+            <Image
+              src={img}
+              alt={product.name}
+              fill
+              sizes="(max-width:640px) 50vw, (max-width:1024px) 33vw, 25vw"
+              className="img-zoom object-contain p-3"
+            />
+          ) : (
+            <div className="grid h-full place-items-center bg-gradient-to-br from-brand-50 to-silver-light">
+              <span className="text-5xl opacity-70 transition-transform group-hover:scale-110">
+                {CATEGORY_ICON[product.category] ?? '🛢️'}
+              </span>
+            </div>
+          )}
           <span className="num absolute bottom-2 left-2 rounded bg-white/90 px-2 py-0.5 text-xs font-bold text-brand-800" dir="ltr">
             {product.saeGrade}
           </span>
